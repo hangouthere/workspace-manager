@@ -1,0 +1,23 @@
+[
+  {
+    "identifier": "ahk_class Notepad",
+    "executable": "notepad.exe",
+    "dimensions": {
+      "width": "100%",
+      "height": "50%",
+      "x": 0,
+      "y": "50%"
+    }
+  },
+
+  {
+    "identifier": "ahk_class CabinetWClass",
+    "executable": "explorer.exe",
+    "dimensions": {
+      "width": "100%",
+      "height": "50%",
+      "x": 0,
+      "y": "0"
+    }
+  }
+]
