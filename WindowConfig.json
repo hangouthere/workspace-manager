@@ -3,10 +3,10 @@
     "identifier": "ahk_class Notepad",
     "executable": "notepad.exe",
     "dimensions": {
-      "width": "100%",
+      "width": "50%",
       "height": "50%",
       "x": 0,
-      "y": "50%"
+      "y": "0"
     }
   },
 
@@ -14,10 +14,11 @@
     "identifier": "ahk_class CabinetWClass",
     "executable": "explorer.exe",
     "dimensions": {
-      "width": "100%",
+      "monitor": 1,
+      "width": "50%",
       "height": "50%",
       "x": 0,
-      "y": "0"
+      "y": "50%"
     }
   }
 ]

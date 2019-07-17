@@ -61,24 +61,39 @@ class WindowManager
 	{
         Call(self, config)
         {
-            SetWinDelay, 250
-
             ; Loop over every config entry
             For idx, WindowCfg in config
             {
-                this.DetectWindow(WindowCfg.identifier, WindowCfg.executable)
-                this.MoveWindow(WindowCfg.identifier, WindowCfg.dimensions)
+                identifier := this.DetectWindow(WindowCfg.identifier, WindowCfg.executable)
+                this.MoveWindow(identifier, WindowCfg.dimensions)
             }
         }
 
         DetectWindow(identifier, executable)
         {
-            if !WinExist(identifier)
+            PID := 0
+            hWnd := identifier ? WinExist(identifier) : 0
+
+            ; No Identifier supplied means to force launch
+            ; OR
+            ; Identifier doesn't match a window
+            if (!identifier or !hWnd)
             {
-                Run, % executable
+                Run, % executable,,, PID
+
+                if (!identifier)
+                {
+                    identifier := "ahk_pid " . PID
+                }
+            } 
+            else
+            {
+                identifier := "ahk_id " . hWnd
             }
 
-            WinWait, % identifier
+            WinWaitActive, % identifier
+
+            return identifier
         }
 
         _calcDimensionForMonitor(MonitorNum, InputVal, Axis := "x", IsOffset := True)
@@ -134,12 +149,11 @@ class WindowManager
             return newDims
         }
 
-        MoveWindow(identifier, dimensions)
+        MoveWindow(hWnd, dimensions)
         {
             newDims := this._convertDimensions(dimensions)
 
-            WinMove, % identifier,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
-            WinActivate, % identifier
+            WinMove, % hWnd,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
         }
     }
 
