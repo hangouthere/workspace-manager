@@ -4,7 +4,7 @@
  * Lib: WindowManager.ahk
  *     Manage Windows with AutoLaunch and other features (TBD).
  * Version:
- *     v0.0.1 [updated 07/17/2019 (MM/DD/YYYY)]
+ *     v1.0.0 [updated 07/18/2019 (MM/DD/YYYY)]
  * License:
  *     WTFPL [http://wtfpl.net/]
  * Requirements:
@@ -13,8 +13,7 @@
  *     Use #Include WindowManager.ahk or copy into a function library folder and then
  *     use #Include <WindowManager>
  * Links:
- *     GitHub:     - TBD
- *     Forum Topic - TBD
+ *     GitHub:     - https://bitbucket.org/nerdfoundrygaming/ahk.windowmanager
  *     Email:      - nfg.codex <at> outlook <dot> com
  */
 
@@ -34,8 +33,13 @@ class WindowManager
 	{
 		Call(self, FileName)
 		{
-			FileObj := FileOpen(FileName, "r")
-			if !IsObject(FileObj)
+            try {	
+			    FileObj := FileOpen(FileName, "r")
+            } catch e {
+				throw Exception("Can't open " . FileName . " for reading.", -1)
+            }
+			
+            if !IsObject(FileObj)
 			{
 				throw Exception("Can't open " . FileName . " for reading.", -1)
 			}
@@ -59,46 +63,105 @@ class WindowManager
 	 */
     class RunConfig extends JSON.Functor
 	{
-        Call(self, config)
+        Settings := ""
+        _NumWindows := 0
+
+        Call(self, Config)
         {
-            ; Loop over every config entry
-            For idx, WindowCfg in config
+            OutputDebug, -------------------------------------------
+
+            this.Settings := Config.Settings
+
+            ; Loop over every Config Entry
+            For idx, WindowCfg in Config.Entries
             {
+                OutputDebug, % JSON.Dump(WindowCfg)
                 identifier := this.DetectWindow(WindowCfg.identifier, WindowCfg.executable)
+
+                if (!identifier)
+                {
+                    Continue
+                }
+
+                WinActivate, % identifier
+                try {
+                    this.ModifyWindow(identifier, WindowCfg.mods)
+                } catch err {
+                    ; Silent Catch
+                }
                 this.MoveWindow(identifier, WindowCfg.dimensions)
+                this._NumWindows += 1
+            }
+
+            if (Config.Settings && True = Config.Settings.ShowFinish)
+            {
+                MsgBox,, % "WindowManager - Complete", % "Done laying out " . this._NumWindows . " windows."
             }
         }
 
         DetectWindow(identifier, executable)
         {
-            PID := 0
-            hWnd := identifier ? WinExist(identifier) : 0
-
-            ; No Identifier supplied means to force launch
-            ; OR
-            ; Identifier doesn't match a window
-            if (!identifier or !hWnd)
+            if (!executable)
             {
-                Run, % executable,,, PID
-
-                if (!identifier)
-                {
-                    identifier := "ahk_pid " . PID
-                }
-            } 
-            else
-            {
-                identifier := "ahk_id " . hWnd
+                throw Exception("Executable not defined", -1)
             }
 
-            WinWaitActive, % identifier
+            PID := 0
+            StringLower, ForceIDentifierCheck, identifier
+            IsForcedFull := "force" = SubStr(ForceIDentifierCheck, 1, 5)
+            IsForcedShort := "F|" = SubStr(ForceIDentifierCheck, 1, 2)
+            IsForced := IsForcedFull || IsForcedShort
 
+            ; strip "force " || "F|" from the identifier
+            if (True = IsForced)
+            {
+                identifier := IsForcedFull ? SubStr(ForceIDentifierCheck, 7) ? SubStr(ForceIDentifierCheck, 3)
+            }
+            else if (!identifier)
+            {
+                return
+            }
+
+            hWnd := (IsForced or !identifier) ? 0 : WinExist(identifier)
+
+            OutputDebug, % "IsForced: " . IsForced
+            OutputDebug, % "hWnd: " . hWnd
+
+            ; IsForced Identifier supplied means to force launch
+            ; OR
+            ; Identifier doesn't match a window
+            if (IsForced or !hWnd)
+            {
+                OutputDebug, % "Not Running (or forced?), Executing: " . executable
+                Run, % executable,,, PID
+                OutputDebug, % "Running PID: " . PID
+                waitIdent := IsForced ? "ahk_pid " . PID : identifier
+                TTY := (this.Settings && this.Settings.TTY_FindWindow) ? this.Settings.TTY_FindWindow : 10
+                OutputDebug, % "WaitIdent: " . waitIdent . " for " . TTY . " seconds"
+                WinWait, % waitIdent,, % TTY
+                if (1 = ErrorLevel)
+                {
+                    OutputDebug, Timed out looking for WaitIdent
+                    return
+                } 
+                else
+                {
+                    OutputDebug, We have a window
+                }
+                WinGet, hWnd, id
+                OutputDebug, % "HWND Found: " . hWnd
+                identifier := IsForced ? "ahk_id " . hWnd : identifier
+            }
+
+            WinWait, % identifier
+            OutputDebug, % "Using ID: " . identifier 
             return identifier
         }
 
+        ; Calculate percentages, negative offsets, and account for toolbars taking real-estate
         _calcDimensionForMonitor(MonitorNum, InputVal, Axis := "x", IsOffset := True)
         {
-            Size := 0
+            Size := InputVal
 
             ; Get Monitor Info
             SysGet, MonitorInfo_, MonitorWorkArea, % MonitorNum
@@ -131,12 +194,15 @@ class WindowManager
             if (True = IsOffset)
             {
                 AxisOffset := Axis = "x" ? MonitorInfo_Left : MonitorInfo_Top
-                Size := Size + AxisOffset
+                AxisEndingOffset := Axis = "x" ? (MonitorInfo_Width + MonitorInfo_Left) : (MonitorInfo_Height + MonitorInfo_Top)
+                FinalOffset := Size >= 0 ? AxisOffset : AxisEndingOffset
+                Size := Size + FinalOffset
             }
 
             return Round(Size)
         }
 
+        ; Translate Dimensions obj to monitor offset
         _convertDimensions(dimensions)
         {
             newDims := dimensions.Clone()
@@ -149,11 +215,52 @@ class WindowManager
             return newDims
         }
 
-        MoveWindow(hWnd, dimensions)
+        ; Move the window to specified Dimensions, after converting to monitor offsets
+        MoveWindow(identifier, dimensions)
         {
+            if (!dimensions)
+            {
+                return
+            }
+
             newDims := this._convertDimensions(dimensions)
 
-            WinMove, % hWnd,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
+            WinMove, % identifier,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
+        }
+
+        ; Modify windows based on predefined keys
+        ModifyWindow(identifier, mods)
+        {
+            if (!mods)
+            {
+                return
+            }
+
+            OutputDebug, % "Mods to apply: " . JSON.Dump(mods)
+
+            if (True = mods.restore)
+            {
+                WinRestore, % identifier
+            }
+
+            if (True = mods.maximize)
+            {
+                WinMaximize, % identifier
+            }
+
+            if (True = mods.minimize)
+            {
+                WinMinimize, % identifier
+            }
+
+            if (mods.WinSet)
+            {
+                For idx, _WinSet in mods.WinSet
+                {
+                    OutputDebug, % JSON.Dump(_WinSet)
+                    WinSet, % _WinSet[1], % _WinSet[2], % _WinSet[3]
+                }
+            }
         }
     }
 

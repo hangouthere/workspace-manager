@@ -1,24 +1,103 @@
-[
-  {
-    "identifier": "ahk_class Notepad",
-    "executable": "notepad.exe",
-    "dimensions": {
-      "width": "50%",
-      "height": "50%",
-      "x": 0,
-      "y": "0"
-    }
+{
+  "Settings": {
+    "TTY_FindWindow": 45,
+    "ShowFinish": true
   },
+  "Entries": [
+    {
+      "identifier": "ahk_class Notepad",
+      "executable": "c:\\windows\\notepad.exe",
+      "dimensions": {
+        "width": "50%",
+        "height": "50%",
+        "x": 0,
+        "y": "0"
+      },
+      "mods": {
+        "WinSet": [
+          ["Style", "-0x10000"],
+          ["Style", "-0x20000"],
+          ["Style", "-0x40000"]
+        ]
+      }
+    },
 
-  {
-    "identifier": "ahk_class CabinetWClass",
-    "executable": "explorer.exe",
-    "dimensions": {
-      "monitor": 1,
-      "width": "50%",
-      "height": "50%",
-      "x": 0,
-      "y": "50%"
+    {
+      "identifier": "ahk_class CabinetWClass",
+      "executable": "explorer.exe c:\\",
+      "dimensions": {
+        "monitor": 1,
+        "width": "50%",
+        "height": "50%",
+        "x": 0,
+        "y": "50%"
+      }
+    },
+
+    {
+      "identifier": "Google ahk_class Chrome_WidgetWin_1",
+      "executable": "http://google.com",
+      "mods": {
+        "restore": true
+      },
+      "dimensions": {
+        "width": 100,
+        "height": "100%",
+        "x": 0,
+        "y": 0
+      }
+    },
+
+    {
+      "identifier": "nerdfoundrygaming ahk_class Chrome_WidgetWin_1",
+      "executable": "https://bitbucket.org/nerdfoundrygaming/ahk.windowmanager"
+    },
+
+    {
+      "identifier": "force ahk_class Notepad",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "width": 400,
+        "height": 300,
+        "x": "-400",
+        "y": "-300"
+      }
+    },
+    {
+      "identifier": "F|ahk_class Notepad",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "width": 150,
+        "height": 150,
+        "x": "-150",
+        "y": "35%"
+      }
+    },
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "width": 150,
+        "height": 150,
+        "x": "-150",
+        "y": "15%"
+      }
+    },
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "width": 200,
+        "height": 150,
+        "x": "-350",
+        "y": "20%"
+      },
+      "mods": {
+        "WinSet": [["Style", "-0x80000"]]
+      }
+    },
+    {
+      "executable": "notepad.exe"
     }
-  }
-]
+  ]
+}
