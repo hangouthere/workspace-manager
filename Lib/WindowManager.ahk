@@ -91,11 +91,12 @@ class WindowManager
 
         ProcessEntry(WindowCfg, Settings)
         {
-            MonitorForWindow := WindowManager.GetMonitorInfo(WindowCfg.dimensions.monitor || 1, Settings)
+            UseMonitorNumber := WindowCfg.dimensions && WindowCfg.dimensions.monitor ? WindowCfg.dimensions.monitor : 1
+            MonitorForWindow := WindowManager.GetMonitorInfo(UseMonitorNumber, Settings)
 
             WindowCfg.dimensions.monitor := MonitorForWindow
 
-            if (!WindowCfg.dimensions.monitor)
+            if (!MonitorForWindow)
             {
                 return false
             }
@@ -115,20 +116,20 @@ class WindowManager
                 ; Silent Catch
             }
 
-            this.MoveWindow(identifier, WindowCfg.dimensions)
+            this.MoveWindow(identifier, WindowCfg.dimensions, MonitorForWindow)
 
             return true
         }
 
         ; Move the window to specified Dimensions, after converting to monitor offsets
-        MoveWindow(identifier, dimensions)
+        MoveWindow(identifier, dimensions, monitor)
         {
             if (!dimensions)
             {
                 return
             }
 
-            newDims := WindowManager.ConvertDimensions(dimensions, dimensions.monitor)
+            newDims := WindowManager.ConvertDimensions(dimensions, monitor)
 
             WinMove, % identifier,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
         }
@@ -183,7 +184,7 @@ class WindowManager
 
             if (newDims.x < 0)
             {
-                newDims.x += monitor.WorkArea.Right
+                newDims.x += monitor.WorkArea.Right - monitor.WorkArea.Left
             }
             
             if (newDims.y < 0)
@@ -259,7 +260,7 @@ class WindowManager
             {
                 Run, % executable,,, PID
                 waitIdent := IsForced ? "ahk_pid " . PID : identifier
-                TTY := Settings && Settings.TTY_FindWindow || 10
+                TTY := Settings && Settings.TTY_FindWindow ? Settings.TTY_FindWindow : 10
                 WinWait, % waitIdent,, % TTY
                 if (1 = ErrorLevel)
                 {
