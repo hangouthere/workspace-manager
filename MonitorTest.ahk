@@ -58,6 +58,7 @@ UpdateOffsetDebug(MonInfo)
     T1w := WindowManager.ConvertDimensions({x: 250, y: 250, width: 250, height: 250}, MonInfo)
     T2w := WindowManager.ConvertDimensions({x: "50%", y: "50%", width: "50%", height: "50%"}, MonInfo)
     T3w := WindowManager.ConvertDimensions({x: -200, y: -200, width: -200, height: -200}, MonInfo)
+    T4w := WindowManager.ConvertDimensions({x: -400, y: -300, width: 400, height: 300}, MonInfo)
 
     GuiControl,, OffsetDebug, % "Monitor " . MonInfo.Index
         . "`nWork Area Start:`t" . MonInfo.WorkArea.Left . ", " . MonInfo.WorkArea.Top
@@ -75,6 +76,7 @@ UpdateOffsetDebug(MonInfo)
         . "`n  250 all around:`t" . T1w.x . ", " . T1w.y . " | " . T1w.width . "x" . T1w.height
         . "`n  50% all around:`t" . T2w.x . ", " . T2w.y . " | " . T2w.width . "x" . T2w.height
         . "`n  -200 all around:`t" . T3w.x . ", " . T3w.y . " | " . T3w.width . "x" . T3w.height
+        . "`n  -400-300@400x300:`t" . T4w.x . ", " . T4w.y . " | " . T4w.width . "x" . T4w.height
 }
 
 Demo()

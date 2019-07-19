@@ -66,7 +66,8 @@ class WindowManager
 	{
         ; TODO - Determine if this is needed to be stored at all
         Settings := ""
-        _NumWindows := 0
+        _NumWindowsBuilt := 0
+        _NumWindowsSkipped := 0
 
         Call(self, Config)
         {
@@ -77,15 +78,16 @@ class WindowManager
             For idx, WindowCfg in Config.Entries
             {
                 didRun := this.ProcessEntry(WindowCfg, Config.Settings)
-                if (true = didRun)
-                {
-                    this._NumWindows += 1
+                if (true = didRun) {
+                    this._NumWindowsBuilt += 1
+                } else {
+                    this._NumWindowsSkipped += 1
                 }
             }
 
             if (Config.Settings && True = Config.Settings.ShowFinish)
             {
-                MsgBox,, % "WindowManager - Complete", % "Done laying out " . this._NumWindows . " windows."
+                MsgBox,, % "WindowManager - Complete", % "Done Managing WorkSpace:`n`nBuilt:`t" . this._NumWindowsBuilt . "`nSkipped:`t" . this._NumWindowsSkipped
             }
         }
 
@@ -184,12 +186,12 @@ class WindowManager
 
             if (newDims.x < 0)
             {
-                newDims.x += monitor.WorkArea.Right
+                newDims.x += monitor.WorkArea.Right + (monitor.WorkArea.Left * -1)
             }
             
             if (newDims.y < 0)
             {
-                newDims.y += monitor.WorkArea.Bottom
+                newDims.y += monitor.WorkArea.Bottom + (monitor.WorkArea.Top * -1)
             }
 
             return newDims
