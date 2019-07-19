@@ -18,7 +18,7 @@ For example, you may want to create a workspace for the following types of workl
 
 With some configuration, you can quickly have a workspace for any occasion!
 
-![Demo](./WindowManager_Demo.gif)
+![Demo](./assets/WindowManager_Demo.gif)
 
 ## Install / Example
 
