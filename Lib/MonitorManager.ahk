@@ -5,12 +5,13 @@ class MonitorManager
         Call(self, MonitorNum)
         {
             ; Get Monitor Info
+            SysGet, MonitorInfo_Name, MonitorName, % MonitorNum
             SysGet, MonitorInfo_, Monitor, % MonitorNum
             SysGet, MonitorWAInfo_, MonitorWorkArea, % MonitorNum
-            MonitorInfo_Width := Abs(MonitorInfo_Right) - Abs(MonitorInfo_Left)
-            MonitorInfo_Height := Abs(MonitorInfo_Bottom) - Abs(MonitorInfo_Top)
-            MonitorWAInfo_Width := Abs(MonitorWAInfo_Right) - Abs(MonitorWAInfo_Left)
-            MonitorWAInfo_Height := Abs(MonitorWAInfo_Bottom) - Abs(MonitorWAInfo_Top)
+            MonitorInfo_Width := Max(Abs(MonitorInfo_Left), Abs(MonitorInfo_Right)) - Min(Abs(MonitorInfo_Left), Abs(MonitorInfo_Right))
+            MonitorInfo_Height := Max(Abs(MonitorInfo_Top), Abs(MonitorInfo_Bottom)) - Min(Abs(MonitorInfo_Top), Abs(MonitorInfo_Bottom))
+            MonitorWAInfo_Height := Max(Abs(MonitorWAInfo_Left), Abs(MonitorWAInfo_Right)) - Min(Abs(MonitorWAInfo_Left), Abs(MonitorWAInfo_Right))
+            MonitorWAInfo_Width := Max(Abs(MonitorWAInfo_Top), Abs(MonitorWAInfo_Bottom)) - Min(Abs(MonitorWAInfo_Top), Abs(MonitorWAInfo_Bottom))
 
             ; Monitor info not found, default to PRIMARY monitor
             if (!MonitorInfo_Width)
@@ -18,7 +19,8 @@ class MonitorManager
                 return MonitorManager.GetMonitorInfo(1)
             }
 
-            MonInfo := {}
+            MonInfo := { Index: MonitorNum
+                , Name: MonitorInfo_Name }
             MonInfo.Offset := { Left: MonitorInfo_Left 
                 , Right: MonitorInfo_Right
                 , Top: MonitorInfo_Top
