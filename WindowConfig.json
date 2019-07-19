@@ -1,7 +1,8 @@
 {
   "Settings": {
     "TTY_FindWindow": 45,
-    "ShowFinish": true
+    "ShowFinish": true,
+    "SkipMissingMonitors": true
   },
   "Entries": [
     {

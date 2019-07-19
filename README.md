@@ -57,7 +57,8 @@ Top-Level FULL structure is as follows:
 ```
 {
     "TTY_FindWindow": 45,
-    "ShowFinish": true
+    "ShowFinish": true,
+    "SkipMissingMonitors": true
 }
 ```
 
@@ -65,6 +66,7 @@ Top-Level FULL structure is as follows:
 | ------- | ---- |collection of `Entry` structures------- | ------------------------------------------------------ |
 | TTY_FindWindow | Integer, Default = 10 | How long to wait to find window on `Entry.identifier`. If this TTY yields, then the Entry will be abandoned. |
 | ShowFinish | Boolean, Default = false | Whether or not to show a final message on completion. |
+| SkipMissingMonitors | Boolean, Default = false | If enabled, Windows targeted for missing monitors will be skipped. Otherwise, calculations default to the Primary Monitor for offset/percentage calculations. |
 
 #### Entries Collection
 

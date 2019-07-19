@@ -1,4 +1,5 @@
 #Include <JSON>
+#Include <MonitorManager>
 
 /**
  * Lib: WindowManager.ahk
@@ -29,7 +30,7 @@ class WindowManager
 	  *     obj        [retval] - AHK Object representation of JSON
 	  *     FileName       [in] - string FileName to load and parse
 	  */
-	class ConfigFromFile extends JSON.Functor
+	class ConfigFromFile extends WindowManager.Functor
 	{
 		Call(self, FileName)
 		{
@@ -61,36 +62,25 @@ class WindowManager
 	 * Parameter(s):
 	 *     wCfg       [retval] - Window Config data struct
 	 */
-    class RunConfig extends JSON.Functor
+    class RunConfig extends WindowManager.Functor
 	{
+        ; TODO - Determine if this is needed to be stored at all
         Settings := ""
         _NumWindows := 0
 
         Call(self, Config)
         {
-            OutputDebug, -------------------------------------------
-
+            ; TODO - Determine if this is needed to be stored at all
             this.Settings := Config.Settings
 
             ; Loop over every Config Entry
             For idx, WindowCfg in Config.Entries
             {
-                OutputDebug, % JSON.Dump(WindowCfg)
-                identifier := this.DetectWindow(WindowCfg.identifier, WindowCfg.executable)
-
-                if (!identifier)
+                didRun := this.ProcessEntry(WindowCfg, Config.Settings)
+                if (true = didRun)
                 {
-                    Continue
+                    this._NumWindows += 1
                 }
-
-                WinActivate, % identifier
-                try {
-                    this.ModifyWindow(identifier, WindowCfg.mods)
-                } catch err {
-                    ; Silent Catch
-                }
-                this.MoveWindow(identifier, WindowCfg.dimensions)
-                this._NumWindows += 1
             }
 
             if (Config.Settings && True = Config.Settings.ShowFinish)
@@ -99,7 +89,145 @@ class WindowManager
             }
         }
 
-        DetectWindow(identifier, executable)
+        ProcessEntry(WindowCfg, Settings)
+        {
+            MonitorForWindow := WindowManager.GetMonitorInfo(WindowCfg.dimensions.monitor || 1, Settings)
+
+            WindowCfg.dimensions.monitor := MonitorForWindow
+
+            if (!WindowCfg.dimensions.monitor)
+            {
+                return false
+            }
+
+            identifier := WindowManager.BuildWindow(WindowCfg.identifier, WindowCfg.executable, Settings)
+
+            if (!identifier)
+            {
+                return false
+            }
+
+            WinActivate, % identifier
+
+            try {
+                this.ModifyWindow(identifier, WindowCfg.mods)
+            } catch err {
+                ; Silent Catch
+            }
+
+            this.MoveWindow(identifier, WindowCfg.dimensions)
+
+            return true
+        }
+
+        ; Move the window to specified Dimensions, after converting to monitor offsets
+        MoveWindow(identifier, dimensions)
+        {
+            if (!dimensions)
+            {
+                return
+            }
+
+            newDims := WindowManager.ConvertDimensions(dimensions, dimensions.monitor)
+
+            WinMove, % identifier,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
+        }
+
+        ; Modify windows based on predefined keys
+        ModifyWindow(identifier, mods)
+        {
+            if (!mods)
+            {
+                return
+            }
+
+            if (True = mods.restore)
+            {
+                WinRestore, % identifier
+            }
+
+            if (True = mods.maximize)
+            {
+                WinMaximize, % identifier
+            }
+
+            if (True = mods.minimize)
+            {
+                WinMinimize, % identifier
+            }
+
+            if (mods.WinSet)
+            {
+                For idx, _WinSet in mods.WinSet
+                {
+                    WinSet, % _WinSet[1], % _WinSet[2], % _WinSet[3]
+                }
+            }
+        }
+    }
+
+    class ConvertDimensions extends WindowManager.Functor
+    {
+        ; Translate Dimensions obj to monitor offset
+        Call(self, dimensions, monitor)
+        {
+            if (!monitor)
+            {
+                return
+            }
+
+            pos := MonitorManager.OffsetForMonitor(dimensions, monitor)
+            dims := MonitorManager.AreaForMonitor(dimensions, monitor)
+        
+            newDims := { x: pos.x, y: pos.y, width: dims.width, height: dims.height }
+
+            if (newDims.x < 0)
+            {
+                newDims.x += monitor.WorkArea.Right
+            }
+            
+            if (newDims.y < 0)
+            {
+                newDims.y += monitor.WorkArea.Bottom
+            }
+
+            return newDims
+        }
+    }
+
+    class GetMonitorInfo extends WindowManager.Functor
+    {
+        Call(self, MonitorNum, Settings)
+        {
+            if (!MonitorNum)
+            {
+                MonitorNum := 1
+            }
+
+            MonInfo := MonitorManager.GetMonitorInfo(MonitorNum)
+
+            if (!MonInfo)
+            {
+                if (1 = MonitorNum)
+                {
+                    throw Exception("Cannot retrieve Monitor Information, hard failure!")
+                }
+                ; Default to Monitor 1 if allowed
+                else if (Settings && false = Settings.SkipMissingMonitors)
+                {
+                    return WindowManager.GetMonitorInfo(1, Settings)
+                }
+
+                return
+            }
+
+            return MonInfo
+        }
+    }
+
+    class BuildWindow extends WindowManager.Functor
+    {
+        Call(self, identifier, executable, Settings)
         {
             if (!executable)
             {
@@ -124,157 +252,29 @@ class WindowManager
 
             hWnd := (IsForced or !identifier) ? 0 : WinExist(identifier)
 
-            OutputDebug, % "IsForced: " . IsForced
-            OutputDebug, % "hWnd: " . hWnd
-
             ; IsForced Identifier supplied means to force launch
             ; OR
             ; Identifier doesn't match a window
             if (IsForced or !hWnd)
             {
-                OutputDebug, % "Not Running (or forced?), Executing: " . executable
                 Run, % executable,,, PID
-                OutputDebug, % "Running PID: " . PID
                 waitIdent := IsForced ? "ahk_pid " . PID : identifier
-                TTY := (this.Settings && this.Settings.TTY_FindWindow) ? this.Settings.TTY_FindWindow : 10
-                OutputDebug, % "WaitIdent: " . waitIdent . " for " . TTY . " seconds"
+                TTY := Settings && Settings.TTY_FindWindow || 10
                 WinWait, % waitIdent,, % TTY
                 if (1 = ErrorLevel)
                 {
-                    OutputDebug, Timed out looking for WaitIdent
                     return
                 } 
-                else
-                {
-                    OutputDebug, We have a window
-                }
                 WinGet, hWnd, id
-                OutputDebug, % "HWND Found: " . hWnd
                 identifier := IsForced ? "ahk_id " . hWnd : identifier
             }
 
             WinWait, % identifier
-            OutputDebug, % "Using ID: " . identifier 
             return identifier
-        }
-
-        ; Calculate percentages, negative offsets, and account for toolbars taking real-estate
-        _calcDimensionForMonitor(MonitorNum, InputVal, Axis := "x", IsOffset := True)
-        {
-            Size := InputVal
-
-            ; Get Monitor Info
-            SysGet, MonitorInfo_, MonitorWorkArea, % MonitorNum
-            MonitorInfo_Width := Abs(MonitorInfo_Right) - Abs(MonitorInfo_Left)
-            MonitorInfo_Height := Abs(MonitorInfo_Bottom) - Abs(MonitorInfo_Top)
-
-            ; Monitor info not found, default to PRIMARY monitor
-            if (!MonitorInfo_Width)
-            {
-                return this._calcDimensionForMonitor(1, InputVal, Axis, IsOffset)
-            }
-
-            ; Special Case Processing
-            if InputVal is not integer
-            {
-                FoundPos := RegExMatch(InputVal, "O)^([0-9]{1,})(\%?)$" , DimMatcher)
-                Size := DimMatcher.Value(1)
-                IsPercent := DimMatcher.Value(2) = "%" ? True : False
-
-                ; User defined a Percent setting, so we need to calculate
-                if (True = IsPercent)
-                {
-                    ; We're calculating SPACIAL values (ie, width/height)
-                    AxisComparator := Axis = "x" ? MonitorInfo_Width : MonitorInfo_Height
-                    Size := AxisComparator * ( Size / 100)
-                }
-            }
-
-            ; We want an OFFSET value (ie, x/y coords) based on our Monitor work area
-            if (True = IsOffset)
-            {
-                AxisOffset := Axis = "x" ? MonitorInfo_Left : MonitorInfo_Top
-                AxisEndingOffset := Axis = "x" ? (MonitorInfo_Width + MonitorInfo_Left) : (MonitorInfo_Height + MonitorInfo_Top)
-                FinalOffset := Size >= 0 ? AxisOffset : AxisEndingOffset
-                Size := Size + FinalOffset
-            }
-
-            return Round(Size)
-        }
-
-        ; Translate Dimensions obj to monitor offset
-        _convertDimensions(dimensions)
-        {
-            newDims := dimensions.Clone()
-        
-            newDims.x := this._calcDimensionForMonitor(newDims.monitor, newDims.x, "x", true)
-            newDims.y := this._calcDimensionForMonitor(newDims.monitor, newDims.y, "y", true)
-            newDims.width := this._calcDimensionForMonitor(newDims.monitor, newDims.width, "x", false)
-            newDims.height := this._calcDimensionForMonitor(newDims.monitor, newDims.height, "y", false)
-
-            return newDims
-        }
-
-        ; Move the window to specified Dimensions, after converting to monitor offsets
-        MoveWindow(identifier, dimensions)
-        {
-            if (!dimensions)
-            {
-                return
-            }
-
-            newDims := this._convertDimensions(dimensions)
-
-            WinMove, % identifier,, % newDims.x, % newDims.y, % newDims.width, % newDims.height
-        }
-
-        ; Modify windows based on predefined keys
-        ModifyWindow(identifier, mods)
-        {
-            if (!mods)
-            {
-                return
-            }
-
-            OutputDebug, % "Mods to apply: " . JSON.Dump(mods)
-
-            if (True = mods.restore)
-            {
-                WinRestore, % identifier
-            }
-
-            if (True = mods.maximize)
-            {
-                WinMaximize, % identifier
-            }
-
-            if (True = mods.minimize)
-            {
-                WinMinimize, % identifier
-            }
-
-            if (mods.WinSet)
-            {
-                For idx, _WinSet in mods.WinSet
-                {
-                    OutputDebug, % JSON.Dump(_WinSet)
-                    WinSet, % _WinSet[1], % _WinSet[2], % _WinSet[3]
-                }
-            }
         }
     }
 
-    class Functor
-	{
-		__Call(method, ByRef arg, args*)
-		{
-		; When casting to Call(), use a new instance of the "function object"
-		; so as to avoid directly storing the properties(used across sub-methods)
-		; into the "function object" itself.
-			if IsObject(method)
-				return (new this).Call(method, arg, args*)
-			else if (method == "")
-				return (new this).Call(arg, args*)
-		}
-	}
+    class Functor extends JSON.Functor
+    {
+    }
 }
