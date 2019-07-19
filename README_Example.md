@@ -24,9 +24,12 @@ If you browse the [Example Config File](./WindowConfig.json), you'll notice the 
 * Notepad 5
     * Setting `mods.WinSet` to take away the window control box 
     * **Must close via menu!**
+* Notepad 7-12
+    * These all spawn on Monitor 2!
+    * If you don't have 2 monitors, the Default Config is configured to skip them.
 
 ### Did You Notice?
 
-Probably not, but there are actually NINE (9) entries defined. So why are we only seeing 8? 
+One Entry is ALWAYS skipped, regardless of Monitor count. Why was an Entry skipped? 
 
 Because an `identifier` wasn't supplied, and we didn't explicitly set it to `force` or `F|`!

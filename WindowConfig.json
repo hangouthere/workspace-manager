@@ -2,7 +2,7 @@
   "Settings": {
     "TTY_FindWindow": 45,
     "ShowFinish": true,
-    "SkipMissingMonitors": true
+    "SkipMissingMonitors": false
   },
   "Entries": [
     {
@@ -100,7 +100,6 @@
     {
       "executable": "notepad.exe"
     },
-
 
     {
       "identifier": "force",
