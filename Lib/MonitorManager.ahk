@@ -1,8 +1,8 @@
-class MonitorTranslator
+class MonitorManager
 {
-    class GetMonitorInfo extends MonitorTranslator.Functor
+    class GetMonitorInfo extends MonitorManager.Functor
     {
-        Call(self, monitor)
+        Call(self, MonitorNum)
         {
             ; Get Monitor Info
             SysGet, MonitorInfo_, Monitor, % MonitorNum
@@ -15,7 +15,7 @@ class MonitorTranslator
             ; Monitor info not found, default to PRIMARY monitor
             if (!MonitorInfo_Width)
             {
-                return this._getMonitorInfo(1)
+                return MonitorManager.GetMonitorInfo(1)
             }
 
             MonInfo := {}
