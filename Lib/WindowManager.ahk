@@ -184,7 +184,7 @@ class WindowManager
 
             if (newDims.x < 0)
             {
-                newDims.x += monitor.WorkArea.Right - monitor.WorkArea.Left
+                newDims.x += monitor.WorkArea.Right
             }
             
             if (newDims.y < 0)
