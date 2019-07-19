@@ -1,14 +1,15 @@
 {
   "Settings": {
     "TTY_FindWindow": 45,
-    "ShowFinish": true
+    "ShowFinish": true,
+    "SkipMissingMonitors": false
   },
   "Entries": [
     {
       "identifier": "ahk_class Notepad",
       "executable": "c:\\windows\\notepad.exe",
       "dimensions": {
-        "width": "50%",
+        "width": "25%",
         "height": "50%",
         "x": 0,
         "y": "0"
@@ -27,7 +28,7 @@
       "executable": "explorer.exe c:\\",
       "dimensions": {
         "monitor": 1,
-        "width": "50%",
+        "width": "25%",
         "height": "50%",
         "x": 0,
         "y": "50%"
@@ -43,7 +44,7 @@
       "dimensions": {
         "width": 100,
         "height": "100%",
-        "x": 0,
+        "x": "25%",
         "y": 0
       }
     },
@@ -98,6 +99,62 @@
     },
     {
       "executable": "notepad.exe"
+    },
+
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "monitor": 2,
+        "width": 20,
+        "height": "20%",
+        "x": "25%",
+        "y": "15%"
+      }
+    },
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "monitor": 2,
+        "width": 20,
+        "height": "20%",
+        "x": "75%",
+        "y": "15%"
+      }
+    },
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "monitor": 2,
+        "width": 10,
+        "height": "14%",
+        "x": "35%",
+        "y": "70%"
+      }
+    },
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "monitor": 2,
+        "width": 10,
+        "height": "14%",
+        "x": "63%",
+        "y": "70%"
+      }
+    },
+    {
+      "identifier": "force",
+      "executable": "notepad.exe",
+      "dimensions": {
+        "monitor": 2,
+        "width": "35%",
+        "height": "10%",
+        "x": "35%",
+        "y": "75%"
+      }
     }
   ]
 }
