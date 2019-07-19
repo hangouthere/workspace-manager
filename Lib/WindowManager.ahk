@@ -186,12 +186,12 @@ class WindowManager
 
             if (newDims.x < 0)
             {
-                newDims.x += monitor.WorkArea.Right + (monitor.WorkArea.Left * -1)
+                newDims.x += monitor.WorkArea.Right - (monitor.Offset.Width - monitor.WorkArea.Width)
             }
             
             if (newDims.y < 0)
             {
-                newDims.y += monitor.WorkArea.Bottom + (monitor.WorkArea.Top * -1)
+                newDims.y += monitor.WorkArea.Bottom - (monitor.Offset.Height - monitor.WorkArea.Height)
             }
 
             return newDims
