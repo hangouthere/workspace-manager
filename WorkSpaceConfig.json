@@ -1,0 +1,299 @@
+{
+  "Entries": [
+    {
+      "dimensions": {
+        "height": "50%",
+        "width": "25%",
+        "x": "0",
+        "y": "0"
+      },
+      "executable": "c:\\windows\\notepad.exe",
+      "inputs": {
+        "entries": [
+          "^A{Del}",
+          "This is a demo of the WorkspaceManager by nfgCodex",
+          "{Enter}{Enter}",
+          "Feel free to visit us on Discord:{Enter}    http://rebrand.ly/nfgDiscord"
+        ],
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "WinSet": [
+          "Style, -0x10000",
+          "Style, -0x20000",
+          "Style, -0x40000"
+        ]
+      },
+      "title": "Initial Notepad",
+      "winClass": "Notepad"
+    },
+    {
+      "dimensions": {
+        "height": "50%",
+        "width": "25%",
+        "x": 0,
+        "y": "50%"
+      },
+      "executable": "explorer.exe c:\\",
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0
+      },
+      "title": "CabinetWClass",
+      "winClass": "CabinetWClass"
+    },
+    {
+      "dimensions": {
+        "height": "100%",
+        "width": 100,
+        "x": "25%",
+        "y": 0
+      },
+      "executable": "http://google.com",
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "restore": 1
+      },
+      "title": "Google Chrome_WidgetWin_1",
+      "winClass": "Chrome_WidgetWin_1",
+      "winTitle": "Google"
+    },
+    {
+      "executable": "https://bitbucket.org/nerdfoundrygaming/workspace-manager",
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0
+      },
+      "title": "nerdfoundrygaming Chrome_WidgetWin_1",
+      "winClass": "Chrome_WidgetWin_1",
+      "winTitle": "nerdfoundrygaming"
+    },
+    {
+      "dimensions": {
+        "height": 300,
+        "width": 500,
+        "x": -500,
+        "y": "-300"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "entries": [
+          "Check out how unique this window is!",
+          "{Enter}{Enter}",
+          "{!}{!}{!}{!} Use the taskbar or ALT{+}F4 to close this window {!}{!}{!}{!}"
+        ],
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "Transparent, 200",
+          "Style, -0x800000",
+          "Style, -0x40000",
+          "Style, -0x20000",
+          "Style, -0x10000"
+        ]
+      },
+      "title": "Notepad - Unique",
+      "winClass": ""
+    },
+    {
+      "dimensions": {
+        "height": 150,
+        "width": 150,
+        "x": "-150",
+        "y": "35%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0
+      },
+      "title": "notepad.exe",
+      "winClass": ""
+    },
+    {
+      "dimensions": {
+        "height": 150,
+        "width": 150,
+        "x": "-150",
+        "y": "15%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0
+      },
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": 150,
+        "width": 200,
+        "x": "-350",
+        "y": "20%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "WinSet": [
+          "Style, -0x80000"
+        ]
+      },
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": "20%",
+        "width": 20,
+        "x": "25%",
+        "y": "15%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "Transparent, 100"
+        ]
+      },
+      "monitor": 2,
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": "20%",
+        "width": 20,
+        "x": "75%",
+        "y": "15%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "Transparent, 100"
+        ]
+      },
+      "monitor": 2,
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": "14%",
+        "width": 10,
+        "x": "35%",
+        "y": "70%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "Transparent, 100"
+        ]
+      },
+      "monitor": 2,
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": "14%",
+        "width": 10,
+        "x": "63%",
+        "y": "70%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "Transparent, 100"
+        ]
+      },
+      "monitor": 2,
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": "10%",
+        "width": "35%",
+        "x": "35%",
+        "y": "75%"
+      },
+      "executable": "notepad.exe",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "Transparent, 100"
+        ]
+      },
+      "monitor": 2,
+      "title": "notepad.exe"
+    },
+    {
+      "dimensions": {
+        "height": "",
+        "width": "",
+        "x": "",
+        "y": ""
+      },
+      "executable": "",
+      "forced": 1,
+      "inputs": {
+        "mode": 3
+      },
+      "mods": {
+        "minMax": 0,
+        "winSets": [
+          "transparent, 200"
+        ]
+      },
+      "title": "Mod WSMgr",
+      "winClass": "",
+      "winTitle": "WorkSpace Manager by nfgCodex"
+    }
+  ],
+  "Settings": {
+    "SearchHiddenWindows": 1,
+    "ShowFinish": 1,
+    "SkipMissingMonitors": 0,
+    "TTY_FindWindow": 45,
+    "WinSearchMode": 2
+  }
+}

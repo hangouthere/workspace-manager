@@ -1,0 +1,3 @@
+[submodule "wiki"]
+	path = wiki
+	url = https://nerdfoundrygaming@bitbucket.org/nerdfoundrygaming/workspace-manager.git/wiki
