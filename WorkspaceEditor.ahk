@@ -5,7 +5,7 @@ SetTitleMatchMode, 2
 #Include <gui/ManagerGUI>
 
 APP_NAME := "WorkSpace Manager"
-APP_VERSION := "v1.0.0"
+APP_VERSION := "v1.0.1"
 
 elevateAdmin() {
     fullCmdLine := DllCall("GetCommandLine", "str")
@@ -37,7 +37,7 @@ runApp() {
 
 wseGui := 0
 
-elevateAdmin()
+; elevateAdmin()
 runApp()
 
 return

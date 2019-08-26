@@ -28,7 +28,7 @@ Just head over to [Downloads](../../downloads), grab the latest version, and unz
 
 This project (as most of mine are) is Open Source, and you can also run from that as well. Be sure to check out the [Developer](./docs/dev.md) documentation for more info.
 
-# Help / Troubleshooting
+# Usage / Help / Troubleshooting
 
 Need help understanding how to use the tool? Check out the [Wiki](../../wiki) for detailed information.
 

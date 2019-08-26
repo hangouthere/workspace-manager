@@ -35,5 +35,5 @@ runApp() {
     }
 }
 
-elevateAdmin()
+; elevateAdmin()
 runApp()

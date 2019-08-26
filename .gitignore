@@ -1,2 +1,5 @@
 *.exe
 *.zip
+
+_build
+_deploy
